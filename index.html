@@ -9,44 +9,60 @@
 <body>
   <script src="myScript.js" defer></script>
 
-  <div class="calculator-flex-container">
-    <div class="calculator-outline">
-      <div class="calculator-screen">
-      </div>
+  <h1 class="title">Calculator</h1>
 
-      <div class="buttons-flex-container">
-        <div class="buttons-row top">
-          <div class="button">*</div>
+  <p class="introduction">This is a basic calculator app that can perform arithmetic operations.</p>
+
+  <div class="entire-calculator-container">
+    <div class="calculator-flex-container">
+
+      <div class="calculator-outline">
+        <div class="calculator-screen">
         </div>
-        <div class="buttons-row">
-          <div class="button">7</div>
-          <div class="button">8</div>
-          <div class="button">9</div>
-          <div class="button">/</div>
-        </div>
-        <div class="buttons-row">
-          <div class="button">4</div>
-          <div class="button">5</div>
-          <div class="button">6</div>
-          <div class="button">+</div>
-        </div>
-        <div class="buttons-row">
-          <div class="button">1</div>
-          <div class="button">2</div>
-          <div class="button">3</div>
-          <div class="button">-</div>
-        </div>
-        <div class="buttons-row">
-          <div class="button">0</div>
-          <div class="button">.</div>
-          <div class="button"></div>
-          <div class="button">=</div>
+  
+        <div class="buttons-flex-container">
+
+          <div class="buttons-row-flex-container">
+            <div class="row top">
+              <div class="button" id="multiply">*</div>
+            </div>
+          </div>
+          <div class="buttons-row-flex-container">
+            <div class="row">
+              <div class="button">7</div>
+              <div class="button">8</div>
+              <div class="button">9</div>
+              <div class="button" id="divide">/</div>
+            </div>
+          </div>
+          <div class="buttons-row-flex-container">
+            <div class="row">
+              <div class="button">4</div>
+              <div class="button">5</div>
+              <div class="button">6</div>
+              <div class="button" id="add">+</div>
+            </div>
+          </div>
+          <div class="buttons-row-flex-container">
+            <div class="row">
+              <div class="button">1</div>
+              <div class="button">2</div>
+              <div class="button">3</div>
+              <div class="button" id="subtract">-</div>
+            </div>
+          </div>
+          <div class="buttons-row-flex-container">
+            <div class="row">
+              <div class="button">0</div>
+              <div class="button">.</div>
+              <div class="button"></div>
+              <div class="button" id="equals">=</div>
+            </div>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
-
   
 </body>
 </html>
