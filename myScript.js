@@ -71,17 +71,57 @@ function clearScreen(){
   clearScreenFlag = false;
 }
 
+function backspaceFunctionality(){
+  if(screen.textContent === String(result))
+    return;
+  screen.textContent = screen.textContent.substring(0, screen.textContent.length-1);
+}
+
+function clearButtonFunctionality(){
+  screen.textContent = "";
+  num1 = null;
+  num2 = null;
+  currOperator = null;
+  prevOperator = null;
+  result = null;
+}
+
+function equalsButtonFunctionality(){
+  // do nothing because there is operator
+  if(!currOperator){
+    return;
+  }
+
+  // take in the 2nd operator from the screen and clear the screen.
+  if(num1 && !num2){
+    num2 = +screen.textContent;
+    clearScreen();
+  }
+  
+  // if we are asked to divide by 0.
+  if(currOperator === "/" && num2 === 0){
+    screen.textContent = "x-x";
+    clearScreenFlag = true;
+    alert("Well now you've gone and done it! Trying to divide by 0? You're a madman! You've killed the poor calculator. ): You can revive him by clearing the cache. (AC)");
+  }
+  // perform computation with CURRENT operator, since this is the most UPDATED computation. 
+  // and display result on screen.
+  else{
+    result = operate(num1, num2, currOperator);
+    screen.textContent = result;
+    clearScreenFlag = true;
+  }
+
+  debug();
+}
+
 function buttonLogic(){
   let calculatorButtons = Array.from(document.body.querySelectorAll('.buttons-row-flex-container .button'));
 
   calculatorButtons.forEach((button) => {
     // backspace
     if(button.textContent === "<-"){
-      button.addEventListener('click', () => {
-        if(screen.textContent === String(result))
-          return;
-        screen.textContent = screen.textContent.substring(0, screen.textContent.length-1);
-      });
+      button.addEventListener('click', backspaceFunctionality);
     }
 
     // numbers and decimals
@@ -101,16 +141,8 @@ function buttonLogic(){
     }
 
     // clear button
-    else if(button.textContent === 'AC'){
-      button.addEventListener('click', () => {
-        screen.textContent = "";
-        num1 = null;
-        num2 = null;
-        currOperator = null;
-        prevOperator = null;
-        result = null;
-      });
-    }
+    else if(button.textContent === 'AC')
+      button.addEventListener('click', clearButtonFunctionality);
 
     // operators buttons
     else if(isButtonAnOperator(button.textContent)){
@@ -153,36 +185,8 @@ function buttonLogic(){
     }
 
     // equals button
-    else if(button.textContent === "="){
-      button.addEventListener('click', () => {
-        // do nothing because there is operator
-        if(!currOperator){
-          return;
-        }
-
-        // take in the 2nd operator from the screen and clear the screen.
-        if(num1 && !num2){
-          num2 = +screen.textContent;
-          clearScreen();
-        }
-        
-        // if we are asked to divide by 0.
-        if(currOperator === "/" && num2 === 0){
-          screen.textContent = "x-x";
-          clearScreenFlag = true;
-          alert("Well now you've gone and done it! Trying to divide by 0? You're a madman! You've killed the poor calculator. ): You can revive him by clearing the cache. (AC)");
-        }
-        // perform computation with CURRENT operator, since this is the most UPDATED computation. 
-        // and display result on screen.
-        else{
-          result = operate(num1, num2, currOperator);
-          screen.textContent = result;
-          clearScreenFlag = true;
-        }
-
-        debug();
-      });
-    }
+    else if(button.textContent === "=")
+      button.addEventListener('click', equalsButtonFunctionality);
 
   });
 }
