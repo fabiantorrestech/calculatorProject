@@ -78,6 +78,8 @@ function buttonLogic(){
     // backspace
     if(button.textContent === "<-"){
       button.addEventListener('click', () => {
+        if(screen.textContent === String(result))
+          return;
         screen.textContent = screen.textContent.substring(0, screen.textContent.length-1);
       });
     }
