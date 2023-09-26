@@ -1,5 +1,5 @@
-let num1 = 0;
-let num2 = 0;
+let num1 = null;
+let num2 = null;
 let operator = "none";
 let screen = document.body.querySelector('.calculator-screen');
 
@@ -71,7 +71,7 @@ function buttonLogic(){
         screen.textContent += button.textContent;
       });
     }
-    else if(button.textContent === 'C'){
+    else if(button.textContent === 'AC'){
       button.addEventListener('click', () => {
         screen.textContent = "";
       });
