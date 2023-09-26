@@ -1,8 +1,17 @@
 let num1 = null;
 let num2 = null;
-let operator = "none";
+let result = null;
+let operator = null;
 let screen = document.body.querySelector('.calculator-screen');
+let clearScreenFlag = false;
 
+
+function debug(){
+  console.log(num1, num2, operator);
+  console.log("result: " + result);
+  console.log("screen: " + screen.textContent);
+  console.log("clearScreenFlag: " + clearScreenFlag);
+}
 
 function isCharacterANumber(char){
   return /^[0-9]*$/.test(char);
@@ -29,8 +38,11 @@ function divide(num1, num2){
   return num1/num2;
 }
 
+// takes in 2 number params (as Strings or Numbers). Returns a number in string-format.
 function operate(num1, num2, operator){
   let result = 0;
+  num1 = +num1;
+  num2 = +num2;
 
   if(operator === "+")
     result = add(num1, num2);
@@ -44,48 +56,67 @@ function operate(num1, num2, operator){
   return result;
 }
 
-  // format: num1OperatorNum2 -> (global-variables) num1, num2, operator
-function parseNumsAndOperator(str){
-  let idxForOperator = -1;
-  // find the operator idx first
-  for(let i=0; i<str.length; i++){
-    if(str[i] === "+" || str[i] === "-" ||
-    str[i] === "/" || str[i] === "*"){
-      idxForOperator = i;
-      break;
-    }
-  }
-  operator = str.charAt(idxForOperator);
-  num1 = +(str.substring(0, idxForOperator));
-  num2 = +(str.substring(idxForOperator+1));
-}
-
 function buttonLogic(){
   let calculatorButtons = Array.from(document.body.querySelectorAll('.buttons-row-flex-container .button'));
 
   calculatorButtons.forEach((button) => {
     // handle screen-content
-    if(isCharacterANumber(button.textContent) || isButtonAnOperator(button.textContent) ||
-    button.textContent === '.'){
+    if(isCharacterANumber(button.textContent) || button.textContent === '.'){
       button.addEventListener('click', () => {
+        if(clearScreenFlag == true){
+          screen.textContent = "";
+          clearScreenFlag = false;
+        }
         screen.textContent += button.textContent;
       });
     }
     else if(button.textContent === 'AC'){
       button.addEventListener('click', () => {
         screen.textContent = "";
+        num1 = null;
+        num2 = null;
+        operator = null;
+        result = null;
+      });
+    }
+    else if(isButtonAnOperator(button.textContent)){
+      button.addEventListener('click', () => {
+        operator = button.textContent;
+
+        // show the 1st number.
+        if(!num1)
+          num1 = +screen.textContent;
+
+        // do computation for 2nd number and update result.
+        else{
+          num2 = +screen.textContent;
+          result = operate(num1, num2, operator);
+          num1 = +result;
+        }
+
+        // for when we have computed 2 numbers.
+        // - display new result, open up num2 for next input, set calc to clear the screen on next-input.
+        if(num2 !== null){
+          screen.textContent = result;
+          num2 = null;
+          clearScreenFlag = true;
+        }
+        // for when we have only input 1 number.
+        else{
+          screen.textContent = "";
+        }
+        debug();
       });
     }
     // handle computation
     else if(button.textContent === "="){
       button.addEventListener('click', () =>{
-        parseNumsAndOperator(screen.textContent);
-        console.log(num1, num2, operator);
-        let result = operate(num1, num2, operator);
-        num1 = 0;
-        num2 = 0;
-        operator = "none";
-        screen.textContent = result;
+        if(!num2)
+          num2 = +screen.textContent;
+        result = operate(num1, num2, operator);
+        if(screen.textContent !== "")
+          screen.textContent = result;
+        debug();
       });
     }
   });
