@@ -116,9 +116,6 @@ function buttonLogic(){
 
         prevOperator = currOperator;
         currOperator = button.textContent;
-        // should only run for 1st run in a chain-computation.
-        if(!prevOperator)
-          prevOperator = currOperator;
         clearScreenFlag = true;
 
         // clear the screen.
@@ -140,7 +137,10 @@ function buttonLogic(){
         // for chaining another operation.
         if(num1 && num2){
           debug();
-          result = operate(num1, num2, prevOperator);
+          if(!prevOperator)
+            result = operate(num1, num2, currOperator);
+          else
+            result = operate(num1, num2, prevOperator);
           num1 = +result;
           num2 = null;
           clearScreen();
