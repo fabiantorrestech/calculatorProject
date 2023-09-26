@@ -41,14 +41,13 @@ function operate(num1, num2, operator){
   else if(operator === "/")
     result = divide(num1, num2);
 
-  console.log(result);
   return result;
 }
 
   // format: num1OperatorNum2 -> (global-variables) num1, num2, operator
 function parseNumsAndOperator(str){
   let idxForOperator = -1;
-  // find the operator firsst
+  // find the operator idx first
   for(let i=0; i<str.length; i++){
     if(str[i] === "+" || str[i] === "-" ||
     str[i] === "/" || str[i] === "*"){
@@ -82,7 +81,11 @@ function buttonLogic(){
       button.addEventListener('click', () =>{
         parseNumsAndOperator(screen.textContent);
         console.log(num1, num2, operator);
-        operate(num1, num2, operator);
+        let result = operate(num1, num2, operator);
+        num1 = 0;
+        num2 = 0;
+        operator = "none";
+        screen.textContent = result;
       });
     }
   });
