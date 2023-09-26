@@ -83,18 +83,30 @@
   margin: 5px;
 }
 
+.button:active {
+  background-color: lightgray;
+}
+
 .clear-button {
   background-color: lightblue;
+}
+
+.clear-button:active {
+  background-color: blue;
 }
 
 .equals-button {
   background-color: lightgray;
 }
 
+.equals-button:active {
+  background-color: darkslategray;
+}
+
 .operators {
   background-color: orange;
 }
 
-.operators-pressed {
+.operators:active {
   background-color: orangered;
 }

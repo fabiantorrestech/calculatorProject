@@ -8,7 +8,9 @@ let clearScreenFlag = false;
 
 
 function debug(){
-  console.log(num1, num2, currOperator);
+  console.log(num1, num2);
+  console.log("currOperator: " + currOperator);
+  console.log("prevOperator: " + prevOperator);
   console.log("result: " + result);
   console.log("screen: " + screen.textContent);
   console.log("clearScreenFlag: " + clearScreenFlag);
@@ -45,14 +47,21 @@ function operate(num1, num2, operator){
   num1 = +num1;
   num2 = +num2;
 
+  console.log("num2: " + num2);
+
   if(operator === "+")
     result = add(num1, num2);
   else if(operator === "-")
     result = subtract(num1, num2);
   else if(operator === "*")
     result = multiply(num1, num2);
-  else if(operator === "/")
+  else if(operator === "/"){
     result = divide(num1, num2);
+  }
+
+  // round results so they will not overflow the screen.
+  if(+result%1 !== 0)
+    result = String(Math.round(+result * 1e21)/1e21);
 
   return result;
 }
@@ -64,20 +73,32 @@ function clearScreen(){
 
 function buttonLogic(){
   let calculatorButtons = Array.from(document.body.querySelectorAll('.buttons-row-flex-container .button'));
-  let operatorButtons = Array.from(document.body.querySelectorAll("#operators"));
-  let numOfButtonsHighlighted = 0;
 
   calculatorButtons.forEach((button) => {
-    
-    
+    // backspace
+    if(button.textContent === "<-"){
+      button.addEventListener('click', () => {
+        screen.textContent = screen.textContent.substring(0, screen.textContent.length-1);
+      });
+    }
+
+    // numbers and decimals
     if(isCharacterANumber(button.textContent) || button.textContent === '.'){
       button.addEventListener('click', () => {
         if(clearScreenFlag)
           clearScreen();
 
-        screen.textContent += button.textContent;
+        // will only allow 1 decimal on screen.
+        if(button.textContent === "." && screen.textContent.includes(".")){
+          screen.textContent += "";
+        }
+        else{
+          screen.textContent += button.textContent;
+        }
       });
     }
+
+    // clear button
     else if(button.textContent === 'AC'){
       button.addEventListener('click', () => {
         screen.textContent = "";
@@ -88,7 +109,8 @@ function buttonLogic(){
         result = null;
       });
     }
-    // +, -, *, /
+
+    // operators buttons
     else if(isButtonAnOperator(button.textContent)){
       button.addEventListener('click', () => {
 
@@ -100,7 +122,7 @@ function buttonLogic(){
         clearScreenFlag = true;
 
         // clear the screen.
-        // we have put an operator, start entering next number.
+        // we have put an operator, start entering next number store.
         if(currOperator !== null && clearScreenFlag === true){
           if(!num1){
             num1 = +screen.textContent;
@@ -113,7 +135,11 @@ function buttonLogic(){
           debug();
         }
         
+        // perform computation on the current 2 numbers, however, use the PREVIOUS operator.
+        // we want to use the previous operator because we just entered a new one for another number we want to put in
+        // for chaining another operation.
         if(num1 && num2){
+          debug();
           result = operate(num1, num2, prevOperator);
           num1 = +result;
           num2 = null;
@@ -121,26 +147,39 @@ function buttonLogic(){
           screen.textContent = result;
           clearScreenFlag = true;
         }
-
-        debug();
       });
     }
 
+    // equals button
     else if(button.textContent === "="){
-
       button.addEventListener('click', () => {
+        // do nothing because there is operator
+        if(!currOperator){
+          return;
+        }
+
+        // take in the 2nd operator from the screen and clear the screen.
         if(num1 && !num2){
           num2 = +screen.textContent;
           clearScreen();
         }
+        
+        // if we are asked to divide by 0.
+        if(currOperator === "/" && num2 === 0){
+          screen.textContent = "x-x";
+          clearScreenFlag = true;
+          alert("Well now you've gone and done it! Trying to divide by 0? You're a madman! You've killed the poor calculator. ): You can revive him by clearing the cache. (AC)");
+        }
+        // perform computation with CURRENT operator, since this is the most UPDATED computation. 
+        // and display result on screen.
+        else{
+          result = operate(num1, num2, currOperator);
+          screen.textContent = result;
+          clearScreenFlag = true;
+        }
 
-        result = operate(num1, num2, currOperator);
-        screen.textContent = result;
         debug();
       });
-
-
-
     }
 
   });
