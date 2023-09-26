@@ -1,13 +1,14 @@
 let num1 = null;
 let num2 = null;
 let result = null;
-let operator = null;
+let prevOperator = null;
+let currOperator = null;
 let screen = document.body.querySelector('.calculator-screen');
 let clearScreenFlag = false;
 
 
 function debug(){
-  console.log(num1, num2, operator);
+  console.log(num1, num2, currOperator);
   console.log("result: " + result);
   console.log("screen: " + screen.textContent);
   console.log("clearScreenFlag: " + clearScreenFlag);
@@ -56,17 +57,24 @@ function operate(num1, num2, operator){
   return result;
 }
 
+function clearScreen(){
+  screen.textContent = "";
+  clearScreenFlag = false;
+}
+
 function buttonLogic(){
   let calculatorButtons = Array.from(document.body.querySelectorAll('.buttons-row-flex-container .button'));
+  let operatorButtons = Array.from(document.body.querySelectorAll("#operators"));
+  let numOfButtonsHighlighted = 0;
 
   calculatorButtons.forEach((button) => {
-    // handle screen-content
+    
+    
     if(isCharacterANumber(button.textContent) || button.textContent === '.'){
       button.addEventListener('click', () => {
-        if(clearScreenFlag == true){
-          screen.textContent = "";
-          clearScreenFlag = false;
-        }
+        if(clearScreenFlag)
+          clearScreen();
+
         screen.textContent += button.textContent;
       });
     }
@@ -75,52 +83,69 @@ function buttonLogic(){
         screen.textContent = "";
         num1 = null;
         num2 = null;
-        operator = null;
+        currOperator = null;
+        prevOperator = null;
         result = null;
       });
     }
+    // +, -, *, /
     else if(isButtonAnOperator(button.textContent)){
       button.addEventListener('click', () => {
-        operator = button.textContent;
 
-        // show the 1st number.
-        if(!num1)
-          num1 = +screen.textContent;
+        prevOperator = currOperator;
+        currOperator = button.textContent;
+        // should only run for 1st run in a chain-computation.
+        if(!prevOperator)
+          prevOperator = currOperator;
+        clearScreenFlag = true;
 
-        // do computation for 2nd number and update result.
-        else{
-          num2 = +screen.textContent;
-          result = operate(num1, num2, operator);
-          num1 = +result;
+        // clear the screen.
+        // we have put an operator, start entering next number.
+        if(currOperator !== null && clearScreenFlag === true){
+          if(!num1){
+            num1 = +screen.textContent;
+            clearScreen();
+          }
+          else if(num1 && !num2){
+            num2 = +screen.textContent;
+            clearScreen();
+          }
+          debug();
         }
-
-        // for when we have computed 2 numbers.
-        // - display new result, open up num2 for next input, set calc to clear the screen on next-input.
-        if(num2 !== null){
-          screen.textContent = result;
+        
+        if(num1 && num2){
+          result = operate(num1, num2, prevOperator);
+          num1 = +result;
           num2 = null;
+          clearScreen();
+          screen.textContent = result;
           clearScreenFlag = true;
         }
-        // for when we have only input 1 number.
-        else{
-          screen.textContent = "";
-        }
+
         debug();
       });
     }
-    // handle computation
+
     else if(button.textContent === "="){
-      button.addEventListener('click', () =>{
-        if(!num2)
+
+      button.addEventListener('click', () => {
+        if(num1 && !num2){
           num2 = +screen.textContent;
-        result = operate(num1, num2, operator);
-        if(screen.textContent !== "")
-          screen.textContent = result;
+          clearScreen();
+        }
+
+        result = operate(num1, num2, currOperator);
+        screen.textContent = result;
         debug();
       });
+
+
+
     }
+
   });
 }
+
 
 function main(){
   buttonLogic(screen);

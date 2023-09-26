@@ -82,3 +82,19 @@
   width: 80px;
   margin: 5px;
 }
+
+.clear-button {
+  background-color: lightblue;
+}
+
+.equals-button {
+  background-color: lightgray;
+}
+
+.operators {
+  background-color: orange;
+}
+
+.operators-pressed {
+  background-color: orangered;
+}
