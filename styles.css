@@ -39,6 +39,9 @@
   border-radius: 2px;
   border: 2px solid black;
   margin: 10px;
+  font-size: 28px;
+  font-family: monospace;
+  text-align: left;
 }
 
 /* 
@@ -69,6 +72,7 @@
 }
 
 .button {
+  cursor: pointer;
   background-color: white;
   border-radius: 2px;
   text-align: center;
