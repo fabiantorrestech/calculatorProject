@@ -47,8 +47,6 @@ function operate(num1, num2, operator){
   num1 = +num1;
   num2 = +num2;
 
-  console.log("num2: " + num2);
-
   if(operator === "+")
     result = add(num1, num2);
   else if(operator === "-")
