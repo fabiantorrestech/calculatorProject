@@ -113,6 +113,19 @@ function equalsButtonFunctionality(){
   debug();
 }
 
+function numbersDecimalLogic(button){
+  if(clearScreenFlag)
+  clearScreen();
+
+  // will only allow 1 decimal on screen.
+  if(button.textContent === "." && screen.textContent.includes(".")){
+    screen.textContent += "";
+  }
+  else{
+    screen.textContent += button.textContent;
+  }
+}
+
 function buttonLogic(){
   let calculatorButtons = Array.from(document.body.querySelectorAll('.buttons-row-flex-container .button'));
 
@@ -125,16 +138,7 @@ function buttonLogic(){
     // numbers and decimals
     if(isCharacterANumber(button.textContent) || button.textContent === '.'){
       button.addEventListener('click', () => {
-        if(clearScreenFlag)
-          clearScreen();
-
-        // will only allow 1 decimal on screen.
-        if(button.textContent === "." && screen.textContent.includes(".")){
-          screen.textContent += "";
-        }
-        else{
-          screen.textContent += button.textContent;
-        }
+        numbersDecimalLogic(button);
       });
     }
 
