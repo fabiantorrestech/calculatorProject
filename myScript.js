@@ -6,7 +6,7 @@ let currOperator = null;
 let screen = document.body.querySelector('.calculator-screen');
 let clearScreenFlag = false;
 
-
+// for debugging purposes only.
 function debug(){
   console.log(num1, num2);
   console.log("currOperator: " + currOperator);
@@ -16,10 +16,12 @@ function debug(){
   console.log("clearScreenFlag: " + clearScreenFlag);
 }
 
+// utilizes regex to tell if a given string (preferably 1 character) is a number.
 function isCharacterANumber(char){
   return /^[0-9]*$/.test(char);
 }
 
+// tells if a button contains an arithmetic operator on the calculator.
 function isButtonAnOperator(char){
   if(char === "+" || char === "-" || char === "/" || char ==="*") return true;
   return false;
@@ -64,6 +66,7 @@ function operate(num1, num2, operator){
   return result;
 }
 
+// will clear the screen and reset the clearScreenFlag.
 function clearScreen(){
   screen.textContent = "";
   clearScreenFlag = false;
@@ -110,7 +113,6 @@ function equalsButtonFunctionality(){
     clearScreenFlag = true;
   }
 
-  debug();
 }
 
 function numbersDecimalLogic(button){
@@ -126,6 +128,40 @@ function numbersDecimalLogic(button){
   }
 }
 
+function operatorsFunctionality(button){
+  prevOperator = currOperator;
+  currOperator = button.textContent;
+  clearScreenFlag = true;
+
+  // clear the screen.
+  // we have put an operator, start entering next number store.
+  if(currOperator !== null && clearScreenFlag === true){
+    if(!num1){
+      num1 = +screen.textContent;
+      clearScreen();
+    }
+    else if(num1 && !num2){
+      num2 = +screen.textContent;
+      clearScreen();
+    }
+  }
+  
+  // perform computation on the current 2 numbers, however, use the PREVIOUS operator.
+  // we want to use the previous operator because we just entered a new one for another number we want to put in
+  // for chaining another operation.
+  if(num1 && num2){
+    if(!prevOperator)
+      result = operate(num1, num2, currOperator);
+    else
+      result = operate(num1, num2, prevOperator);
+    num1 = +result;
+    num2 = null;
+    clearScreen();
+    screen.textContent = result;
+    clearScreenFlag = true;
+  }
+}
+
 function buttonLogic(){
   let calculatorButtons = Array.from(document.body.querySelectorAll('.buttons-row-flex-container .button'));
 
@@ -134,68 +170,25 @@ function buttonLogic(){
     if(button.textContent === "<-"){
       button.addEventListener('click', backspaceFunctionality);
     }
-
     // numbers and decimals
     if(isCharacterANumber(button.textContent) || button.textContent === '.'){
       button.addEventListener('click', () => {
         numbersDecimalLogic(button);
       });
     }
-
     // clear button
     else if(button.textContent === 'AC')
       button.addEventListener('click', clearButtonFunctionality);
-
     // operators buttons
     else if(isButtonAnOperator(button.textContent)){
       button.addEventListener('click', () => {
-
-        prevOperator = currOperator;
-        currOperator = button.textContent;
-        clearScreenFlag = true;
-
-        // clear the screen.
-        // we have put an operator, start entering next number store.
-        if(currOperator !== null && clearScreenFlag === true){
-          if(!num1){
-            num1 = +screen.textContent;
-            clearScreen();
-          }
-          else if(num1 && !num2){
-            num2 = +screen.textContent;
-            clearScreen();
-          }
-          debug();
-        }
-        
-        // perform computation on the current 2 numbers, however, use the PREVIOUS operator.
-        // we want to use the previous operator because we just entered a new one for another number we want to put in
-        // for chaining another operation.
-        if(num1 && num2){
-          debug();
-          if(!prevOperator)
-            result = operate(num1, num2, currOperator);
-          else
-            result = operate(num1, num2, prevOperator);
-          num1 = +result;
-          num2 = null;
-          clearScreen();
-          screen.textContent = result;
-          clearScreenFlag = true;
-        }
+        operatorsFunctionality(button);
       });
     }
-
     // equals button
     else if(button.textContent === "=")
       button.addEventListener('click', equalsButtonFunctionality);
-
   });
 }
 
-
-function main(){
-  buttonLogic(screen);
-}
-
-main();
+buttonLogic();
